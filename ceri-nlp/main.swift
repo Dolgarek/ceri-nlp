@@ -7,42 +7,29 @@
 
 import Foundation
 import NaturalLanguage
+import Swifter
 
-/*print("Hello, World!")
+let server = HttpServer()
 
-let text = """
-All human beings are born free and equal in dignity and rights.
-They are endowed with reason and conscience and should act towards one another in a spirit of brotherhood.
-"""
+func helloWorld(request: HttpRequest) -> HttpResponse {
+    let soapResponse = """
+    <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+        <soap:Body>
+            <transcription>Bonjour le Monde</transcription>
+        </soap:Body>
+    </soap:Envelope>
+    """
+    return HttpResponse.raw(200, "OK", ["Content-Type": "application/xml"], { writer in
+        guard let data = soapResponse.data(using: .utf8) else {
+            print("ERROR 500")
+            return
+        }
+        try writer.write(data)
+    })}
 
-let tokenizer = NLTokenizer(unit: .word)
-tokenizer.string = text
-
-tokenizer.enumerateTokens(in: text.startIndex..<text.endIndex) { tokenRange, _ in
-    print(text[tokenRange])
-    return true
-}*/
-
-/*let text = "The American Red Cross was established in Washington, D.C., by Clara Barton."
-
-let tagger = NLTagger(tagSchemes: [.nameType])
-tagger.string = text
-
-let options: NLTagger.Options = [.omitPunctuation, .omitWhitespace, .joinNames]
-let tags: [NLTag] = [.personalName, .placeName, .organizationName]
-
-tagger.enumerateTags(in: text.startIndex..<text.endIndex, unit: .word, scheme: .nameType, options: options) { tag, tokenRange in
-    // Get the most likely tag, and print it if it's a named entity.
-    if let tag = tag, tags.contains(tag) {
-        print("\(text[tokenRange]): \(tag.rawValue)")
-    }
-        
-    // Get multiple possible tags with their associated confidence scores.
-    let (hypotheses, _) = tagger.tagHypotheses(at: tokenRange.lowerBound, unit: .word, scheme: .nameType, maximumCount: 1)
-    print(hypotheses)
-        
-   return true
-}*/
+server.GET["/"] = { request in
+    return helloWorld(request: request)
+}
 
 func createSOAPRequest(action: MusicAction, endpoint: String) -> URLRequest? {
     let soapMessage: String
@@ -199,11 +186,19 @@ func performAction(_ action: MusicAction) {
     }
 }
 
-
 tag(text: "Joue trop beau de Lomepal")
 //let command = "Joue Thunderstruck de AC/DC"
 let command = "Joue trop beau de Lomepal"
 
 if let action = processCommand(text: command) {
-    performAction(action)
+    //performAction(action)
+}
+
+do {
+    try server.start(45877, forceIPv4: true)
+    
+    print("Server is running on http://192.168.1.12:45877/")
+    RunLoop.main.run()
+} catch {
+    print("Error starting server: \(error)")
 }

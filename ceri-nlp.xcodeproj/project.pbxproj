@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C139581129D9D4CF005DF995 /* Swifter in Frameworks */ = {isa = PBXBuildFile; productRef = C139581029D9D4CF005DF995 /* Swifter */; };
 		C1FE881C29BB18560086E8C3 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FE881B29BB18560086E8C3 /* main.swift */; };
 /* End PBXBuildFile section */
 
@@ -32,6 +33,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C139581129D9D4CF005DF995 /* Swifter in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +80,9 @@
 			dependencies = (
 			);
 			name = "ceri-nlp";
+			packageProductDependencies = (
+				C139581029D9D4CF005DF995 /* Swifter */,
+			);
 			productName = "ceri-nlp";
 			productReference = C1FE881829BB18560086E8C3 /* ceri-nlp */;
 			productType = "com.apple.product-type.tool";
@@ -106,6 +111,9 @@
 				Base,
 			);
 			mainGroup = C1FE880F29BB18560086E8C3;
+			packageReferences = (
+				C139580F29D9D4CF005DF995 /* XCRemoteSwiftPackageReference "swifter" */,
+			);
 			productRefGroup = C1FE881929BB18560086E8C3 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -284,6 +292,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C139580F29D9D4CF005DF995 /* XCRemoteSwiftPackageReference "swifter" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/httpswift/swifter.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C139581029D9D4CF005DF995 /* Swifter */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C139580F29D9D4CF005DF995 /* XCRemoteSwiftPackageReference "swifter" */;
+			productName = Swifter;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C1FE881029BB18560086E8C3 /* Project object */;
 }
