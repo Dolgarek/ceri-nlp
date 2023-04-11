@@ -41,6 +41,8 @@ func createSOAPRequest(action: MusicAction, endpoint: String) -> URLRequest? {
         soapMessage = "<PauseMusic/>"
     case .resume:
         soapMessage = "<ResumeMusic/>"
+    case .stop:
+        soapMessage = "<StopMusic/>"
     case .playSong(let song):
         soapMessage = "<PlaySong><song>\(song)</song></PlaySong>"
     case .playArtist(let artist):
@@ -96,12 +98,41 @@ enum MusicAction {
     case play
     case pause
     case resume
+    case stop
     case playSong(String)
     case playArtist(String)
     case playSongAndArtist(song: String, artist: String)
 }
 
-func processCommand(text: String) -> MusicAction? {
+var soapEnvelope = ""
+
+func requestParser(request: HttpRequest) -> HttpResponse {
+    let data = Data(request.body)
+    let parser = XMLParser(data: data)
+    let delegate = XMLDelegate()
+    parser.delegate = delegate
+    parser.parse()
+    
+    let textData = delegate.text
+    print("Transcription \(type(of: textData)) : \(textData)")
+    
+    processCommand(text: textData)
+    
+    return HttpResponse.raw(200, "OK", ["Content-Type": "application/xml"], { writer in
+        guard let data = soapEnvelope.data(using: .utf8) else {
+            print("ERROR 500")
+            return
+        }
+        try writer.write(data)
+    })
+}
+
+server.POST["/action"] = { request in
+    return requestParser(request: request)
+}
+
+func processCommand(text: String) -> String {
+    
     let tagger = NLTagger(tagSchemes: [.lexicalClass, .nameType])
     tagger.string = text
     let wholeText = text.startIndex..<text.endIndex
@@ -129,6 +160,7 @@ func processCommand(text: String) -> MusicAction? {
                     currentArtist = word
                 } else {
                     currentSong += " " + word
+                    currentSong = currentSong.trimmingCharacters(in: .whitespaces)
                 }
             default:
                 break
@@ -152,21 +184,54 @@ func processCommand(text: String) -> MusicAction? {
             musicAction = .playSongAndArtist(song: currentSong, artist: currentArtist)
             print("3")
         }
-    case "pause", "arrêter":
+    case "pause":
         musicAction = .pause
         print("4")
+    case "stop", "stopper", "coupe", "couper", "arrête", "arrêter":
+        musicAction = .stop
+        print("5")
     case "reprendre", "continuer":
         musicAction = .resume
-        print("5")
+        print("6")
     case "artiste":
         musicAction = .playArtist(currentArtist)
-        print("6")
+        print("7")
     default:
         break
     }
     
-    return musicAction
+    var soapMessage = ""
+        switch musicAction {
+        case .play:
+            soapMessage = "<PlayMusic/>"
+        case .pause:
+            soapMessage = "<PauseMusic/>"
+        case .stop:
+            soapMessage = "<StopMusic/>"
+        case .resume:
+            soapMessage = "<ResumeMusic/>"
+        case .playSong(let song):
+            soapMessage = "<PlaySong><song>\(song)</song></PlaySong>"
+        case .playArtist(let artist):
+            soapMessage = "<PlayArtist><artist>\(artist)</artist></PlayArtist>"
+        case .playSongAndArtist(let song, let artist):
+            soapMessage = "<PlaySongAndArtist><song>\(song)</song><artist>\(artist)</artist></PlaySongAndArtist>"
+        default:
+            break
+        }
+
+        soapEnvelope = """
+            <?xml version="1.0" encoding="utf-8"?>
+            <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <soap:Body>
+                \(soapMessage)
+              </soap:Body>
+            </soap:Envelope>
+            """
+    
+    return soapEnvelope
 }
+
 func performAction(_ action: MusicAction) {
     let endpoint = "https://your-soap-server.com/soap-endpoint"
 
@@ -190,9 +255,9 @@ tag(text: "Joue trop beau de Lomepal")
 //let command = "Joue Thunderstruck de AC/DC"
 let command = "Joue trop beau de Lomepal"
 
-if let action = processCommand(text: command) {
+/*if let action = processCommand(text: command) {
     //performAction(action)
-}
+}*/
 
 do {
     try server.start(45877, forceIPv4: true)

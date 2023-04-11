@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		45C8073E29D9EFD5002E5EFF /* XMLDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C8073D29D9EFD5002E5EFF /* XMLDelegate.swift */; };
 		C139581129D9D4CF005DF995 /* Swifter in Frameworks */ = {isa = PBXBuildFile; productRef = C139581029D9D4CF005DF995 /* Swifter */; };
 		C1FE881C29BB18560086E8C3 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FE881B29BB18560086E8C3 /* main.swift */; };
 /* End PBXBuildFile section */
@@ -24,6 +25,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		45C8073D29D9EFD5002E5EFF /* XMLDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLDelegate.swift; sourceTree = "<group>"; };
 		C1FE881829BB18560086E8C3 /* ceri-nlp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "ceri-nlp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C1FE881B29BB18560086E8C3 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -60,6 +62,7 @@
 			isa = PBXGroup;
 			children = (
 				C1FE881B29BB18560086E8C3 /* main.swift */,
+				45C8073D29D9EFD5002E5EFF /* XMLDelegate.swift */,
 			);
 			path = "ceri-nlp";
 			sourceTree = "<group>";
@@ -128,6 +131,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				45C8073E29D9EFD5002E5EFF /* XMLDelegate.swift in Sources */,
 				C1FE881C29BB18560086E8C3 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -252,7 +256,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = ZH6N2K7MA2;
+				DEVELOPMENT_TEAM = ATL5R5VHCG;
 				ENABLE_HARDENED_RUNTIME = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -263,7 +267,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = ZH6N2K7MA2;
+				DEVELOPMENT_TEAM = ATL5R5VHCG;
 				ENABLE_HARDENED_RUNTIME = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
