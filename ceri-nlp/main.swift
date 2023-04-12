@@ -144,31 +144,51 @@ func processCommand(text: String) -> String {
     var currentSong: String = ""
     var currentArtist: String = ""
     var processingArtist = false
+    var processingCommand = true
 
     tagger.enumerateTags(in: wholeText, unit: .word, scheme: .lexicalClass, options: options) { tag, range in
         let word = String(text[range]).lowercased()
         
-        if let tag = tag {
-            switch tag {
-            case .verb:
+        if processingCommand {
+            if word == "stop" || word == "arrête" || word == "coupe" || word == "couper" || word == "arrêter" || word == "stopper" {
                 currentCommand = word
-            case .noun, .adjective, .adverb, .preposition:
-                if word == "de" {
-                    processingArtist = true
+                processingCommand = false
+            }
+            if word == "joue" || word == "jouer" || word == "lancer" || word == "lance" || word == "écoute" || word == "écouter" {
+                currentCommand = "lance"
+                processingCommand = false
+            }
+            if word == "reprendre" || word == "continue" || word == "continuer" || word == "reprend" {
+                currentCommand = "reprendre"
+                processingCommand = false
+            }
+            if word == "pause" {
+                currentCommand = word
+                processingCommand = false
+            }
+            //Gérer unknown
+        } else {
+            if let tag = tag {
+                switch tag {
+                case .verb, .noun, .adjective, .adverb, .preposition, .otherWord:
+                    if word == "de" {
+                        processingArtist = true
+                    }
+                    if processingArtist {
+                        currentArtist = word
+                    } else {
+                        currentSong += " " + word
+                        currentSong = currentSong.trimmingCharacters(in: .whitespaces)
+                    }
+                default:
+                    break
                 }
-                if processingArtist {
-                    currentArtist = word
-                } else {
-                    currentSong += " " + word
-                    currentSong = currentSong.trimmingCharacters(in: .whitespaces)
-                }
-            default:
-                break
             }
         }
         print(currentCommand, currentSong, currentArtist, processingArtist)
         return true
     }
+    
     
     switch currentCommand {
     case "lancer", "lance", "jouer", "joue", "écouter", "écoute":
@@ -251,19 +271,20 @@ func performAction(_ action: MusicAction) {
     }
 }
 
-tag(text: "Joue trop beau de Lomepal")
+tag(text: "Joue Thunderstruck de AC/DC")
 //let command = "Joue Thunderstruck de AC/DC"
-let command = "Joue trop beau de Lomepal"
+let command = "Joue Thunderstruck de AC/DC"
+print(processCommand(text: command))
 
 /*if let action = processCommand(text: command) {
     //performAction(action)
 }*/
 
-do {
+/*do {
     try server.start(45877, forceIPv4: true)
     
     print("Server is running on http://192.168.1.12:45877/")
     RunLoop.main.run()
 } catch {
     print("Error starting server: \(error)")
-}
+}*/
